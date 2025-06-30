@@ -38,10 +38,14 @@ jobs:
       run: npm install
       
     - name: Install Jekyll dependencies
-      run: npm run jekyll:install
+      run: |
+        # Install Jekyll dependencies for Vonge theme
+        BUNDLE_GEMFILE=site/Gemfile bundle install
       
     - name: Build Jekyll site
-      run: npm run build
+      run: |
+        # Build the Jekyll site for this Bookshop theme
+        BUNDLE_GEMFILE=site/Gemfile bundle exec jekyll build --source site --destination _site
       
     - name: Configure AWS credentials using OIDC
       uses: aws-actions/configure-aws-credentials@v4
