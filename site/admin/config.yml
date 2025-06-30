@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: Don-Helios/donhelios-web  # Replace with your actual repo
+  repo: Don-Helios/donhelios-web
   branch: main
   # Add these for better security context handling
   auth_scope: repo
@@ -11,7 +11,7 @@ media_folder: "site/assets/images/uploads"
 public_folder: "/assets/images/uploads"
 
 # Site URL (important for HTTPS context)
-site_url: https://donhelios.com  # Replace with your actual domain
+site_url: https://donhelios.com
 
 # Collections
 collections:
