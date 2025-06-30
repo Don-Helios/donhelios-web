@@ -2,20 +2,29 @@ backend:
   name: github
   repo: Don-Helios/donhelios-web  # Replace with your actual repo
   branch: main
+  # Add these for better security context handling
+  auth_scope: repo
+  base_url: https://api.github.com
 
-media_folder: "assets/images/uploads"
+# Media settings
+media_folder: "site/assets/images/uploads"
 public_folder: "/assets/images/uploads"
 
+# Site URL (important for HTTPS context)
+site_url: https://donhelios.com  # Replace with your actual domain
+
+# Collections
 collections:
   - name: "posts"
-    label: "Blog Posts"  
-    folder: "_posts"
+    label: "Blog Posts"
+    folder: "site/_posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
-      - {label: "Author", name: "author", widget: "string"}
+      - {label: "Author", name: "author", widget: "string", default: "Author"}
+      - {label: "Layout", name: "layout", widget: "hidden", default: "post"}
       - {label: "Content", name: "body", widget: "markdown"}
 
   - name: "pages"
@@ -23,7 +32,8 @@ collections:
     files:
       - label: "About"
         name: "about"
-        file: "about.md"
+        file: "site/about.md"
         fields:
           - {label: "Title", name: "title", widget: "string"}
+          - {label: "Layout", name: "layout", widget: "hidden", default: "page"}
           - {label: "Content", name: "body", widget: "markdown"}
