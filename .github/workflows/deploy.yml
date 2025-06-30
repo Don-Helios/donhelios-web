@@ -1,0 +1,75 @@
+name: Deploy Jekyll Site to S3
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # Required for OIDC
+  contents: read    # Required to checkout code
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js (for Bookshop)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+        bundler-cache: true
+        
+    - name: Install Node dependencies
+      run: npm install
+      
+    - name: Install Jekyll dependencies
+      run: npm run jekyll:install
+      
+    - name: Build Jekyll site
+      run: npm run build
+      
+    - name: Configure AWS credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHubActions-Jekyll-Deploy
+        aws-region: ${{ env.AWS_REGION }}
+        
+    - name: Deploy to S3
+      run: |
+        aws s3 sync _site/ s3://${{ secrets.S3_BUCKET_NAME }} \
+          --delete \
+          --exclude "${{ secrets.EXCLUDE_FOLDER }}/*" \
+          --cache-control "public, max-age=86400"
+          
+    - name: Invalidate CloudFront (if exists)
+      run: |
+        # Get CloudFront distribution ID for this bucket (if any)
+        DISTRIBUTION_ID=$(aws cloudfront list-distributions \
+          --query "DistributionList.Items[?Origins.Items[0].DomainName=='${{ secrets.S3_BUCKET_NAME }}.s3.amazonaws.com'].Id" \
+          --output text 2>/dev/null || echo "")
+        
+        if [ ! -z "$DISTRIBUTION_ID" ] && [ "$DISTRIBUTION_ID" != "None" ]; then
+          echo "Found CloudFront distribution: $DISTRIBUTION_ID"
+          aws cloudfront create-invalidation \
+            --distribution-id $DISTRIBUTION_ID \
+            --paths "/*"
+          echo "CloudFront invalidation created"
+        else
+          echo "No CloudFront distribution found - skipping invalidation"
+        fi
