@@ -4,8 +4,30 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
+  <!-- Add meta tag for security context -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:;">
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <!-- Load Decap CMS with specific version that handles HTTPS better -->
+  <script src="https://unpkg.com/decap-cms@^3.1.0/dist/decap-cms.js"></script>
+  
+  <!-- Fallback initialization script -->
+  <script>
+    // Check if CMS loaded properly
+    window.addEventListener('load', function() {
+      // Give CMS time to initialize
+      setTimeout(function() {
+        if (window.CMS && typeof window.CMS.init === 'function') {
+          console.log('Decap CMS loaded successfully');
+        } else {
+          console.error('Decap CMS failed to load properly');
+          // Try to reinitialize
+          if (window.DecapCMS) {
+            window.DecapCMS.init();
+          }
+        }
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
