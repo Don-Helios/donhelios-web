@@ -12,7 +12,7 @@ permissions:
   contents: read    # Required to checkout code
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-east-2 #My Bucket is in Ohio
 
 jobs:
   deploy:
