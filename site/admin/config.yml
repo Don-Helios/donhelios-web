@@ -4,7 +4,7 @@ backend:
   branch: main
   auth_scope: repo
   # Add your OAuth app client ID here
-  client_id: ${{secrets.YOUR_GITHUB_OAUTH_CLIENT_ID}}
+  client_id: Ov23likMfHAo6S1eX7Vc
 
 # Media settings
 media_folder: "site/assets/images/uploads"
