@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Don-Helios/donhelios-web
   branch: main
-  base_url: https://jaowa8lev3.execute-api.us-east-2.amazonaws.com/prod  # Replace with your actual API Gateway URL
+  base_url: https://auth.donhelios.com/  # Replace with your actual API Gateway URL
   auth_endpoint: auth
 
 # Media settings
