@@ -66,6 +66,36 @@
           console.log('GitHub auth success message detected!');
           debugEl.innerHTML += '<div style="color: orange;">🔥 Auth success detected!</div>';
           
+          // Extract and manually store the token
+          try {
+            const tokenMatch = event.data.match(/authorization:github:success:(.+)/);
+            if (tokenMatch) {
+              const authData = JSON.parse(tokenMatch[1]);
+              console.log('Parsed auth data:', authData);
+              
+              // Store token the way Decap CMS expects it
+              const cmsAuthKey = 'decap-cms.user';
+              const userData = {
+                name: 'GitHub User',
+                login: 'github-user',
+                token: authData.token,
+                avatar_url: '',
+                backendName: 'github'
+              };
+              
+              localStorage.setItem(cmsAuthKey, JSON.stringify(userData));
+              debugEl.innerHTML += '<div style="color: green;">✓ Token manually stored</div>';
+              
+              // Try to trigger CMS refresh
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }
+          } catch (e) {
+            console.error('Failed to parse auth data:', e);
+            debugEl.innerHTML += '<div style="color: red;">✗ Failed to parse token</div>';
+          }
+          
           // Check localStorage after the message
           setTimeout(() => {
             console.log('localStorage after auth message:', Object.keys(localStorage));
