@@ -52,12 +52,24 @@
       // Get the last received token from console logs
       const lastToken = window.lastAuthToken;
       if (lastToken) {
+        // Use the full format Decap CMS expects
         const userData = {
           token: lastToken,
-          provider: 'github'
+          provider: 'github',
+          name: 'GitHub User',
+          login: 'github-user',
+          avatar_url: 'https://github.com/images/error/octocat_happy.gif',
+          email: '',
+          backendName: 'github',
+          id: 'github-user'
         };
+        
+        // Clear any existing auth data first
+        localStorage.removeItem('decap-cms.user');
+        localStorage.removeItem('netlify-cms-user');
+        
         localStorage.setItem('decap-cms.user', JSON.stringify(userData));
-        console.log('Stored token manually:', userData);
+        console.log('Stored full auth data:', userData);
         window.location.reload();
       } else {
         alert('No token found. Try OAuth flow again.');
