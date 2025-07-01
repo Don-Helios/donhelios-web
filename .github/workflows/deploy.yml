@@ -64,22 +64,16 @@ jobs:
 
     - name: Invalidate CloudFront
       run: |
-        # Get CloudFront distribution ID for this domain
-        DISTRIBUTION_ID=$(aws cloudfront list-distributions \
-          --query "DistributionList.Items[?Aliases.Items[0]=='donhelios.com'].Id" \
-          --output text 2>/dev/null || echo "")
+        # Use the distribution ID from secrets
+        DISTRIBUTION_ID="${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
         
-        if [ ! -z "$DISTRIBUTION_ID" ] && [ "$DISTRIBUTION_ID" != "None" ]; then
-          echo "Found CloudFront distribution: $DISTRIBUTION_ID"
+        if [ ! -z "$DISTRIBUTION_ID" ]; then
+          echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
           aws cloudfront create-invalidation \
             --distribution-id $DISTRIBUTION_ID \
             --paths "/*"
-          echo "CloudFront invalidation created"
+          echo "CloudFront invalidation created successfully"
         else
-          echo "No CloudFront distribution found for donhelios.com"
-          # List all distributions to help debug
-          echo "Available distributions:"
-          aws cloudfront list-distributions \
-            --query "DistributionList.Items[*].{Id:Id,Domain:DomainName,Aliases:Aliases.Items}" \
-            --output table
+          echo "No CloudFront distribution ID provided in secrets"
+          echo "Please add CLOUDFRONT_DISTRIBUTION_ID to your repository secrets"
         fi
