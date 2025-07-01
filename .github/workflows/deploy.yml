@@ -1,5 +1,4 @@
 name: Deploy Jekyll Site to S3
-
 on:
   push:
     branches: [ main ]
@@ -12,60 +11,62 @@ permissions:
   contents: read    # Required to checkout code
 
 env:
-  AWS_REGION: us-east-2 #My Bucket is in Ohio
+  AWS_REGION: us-east-2
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js (for Bookshop)
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-        
+
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.1'
-        bundler-cache: true
-        
+        # Don't use bundler-cache since Gemfile is in subdirectory
+        bundler-cache: false
+        working-directory: site
+
     - name: Install Node dependencies
       run: npm install
-      
+
     - name: Install Jekyll dependencies
       run: |
-        # Install Jekyll dependencies for Vonge theme
-        BUNDLE_GEMFILE=site/Gemfile bundle install
-      
+        cd site
+        bundle install
+
     - name: Build Jekyll site
       run: |
-        # Build the Jekyll site for this Bookshop theme
-        BUNDLE_GEMFILE=site/Gemfile bundle exec jekyll build --source site --destination _site
-      
+        cd site
+        bundle exec jekyll build --destination ../_site
+
     - name: Configure AWS credentials using OIDC
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: GitHubActions-Jekyll-Deploy
         aws-region: ${{ env.AWS_REGION }}
-        
+
     - name: Deploy to S3
       run: |
         aws s3 sync _site/ s3://${{ secrets.S3_BUCKET_NAME }} \
           --delete \
           --exclude "${{ secrets.EXCLUDE_FOLDER }}/*" \
           --cache-control "public, max-age=86400"
-          
-    - name: Invalidate CloudFront (if exists)
+
+    - name: Invalidate CloudFront
       run: |
-        # Get CloudFront distribution ID for this bucket (if any)
+        # Get CloudFront distribution ID for this domain
         DISTRIBUTION_ID=$(aws cloudfront list-distributions \
-          --query "DistributionList.Items[?Origins.Items[0].DomainName=='${{ secrets.S3_BUCKET_NAME }}.s3.amazonaws.com'].Id" \
+          --query "DistributionList.Items[?Aliases.Items[0]=='donhelios.com'].Id" \
           --output text 2>/dev/null || echo "")
         
         if [ ! -z "$DISTRIBUTION_ID" ] && [ "$DISTRIBUTION_ID" != "None" ]; then
@@ -75,5 +76,10 @@ jobs:
             --paths "/*"
           echo "CloudFront invalidation created"
         else
-          echo "No CloudFront distribution found - skipping invalidation"
+          echo "No CloudFront distribution found for donhelios.com"
+          # List all distributions to help debug
+          echo "Available distributions:"
+          aws cloudfront list-distributions \
+            --query "DistributionList.Items[*].{Id:Id,Domain:DomainName,Aliases:Aliases.Items}" \
+            --output table
         fi
