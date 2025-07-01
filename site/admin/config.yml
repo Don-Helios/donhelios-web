@@ -2,9 +2,8 @@ backend:
   name: github
   repo: Don-Helios/donhelios-web
   branch: main
-  auth_scope: repo
-  # Add your OAuth app client ID here
-  client_id: Ov23likMfHAo6S1eX7Vc
+  base_url: https://jaowa8lev3.execute-api.us-east-2.amazonaws.com/prod  # Replace with your actual API Gateway URL
+  auth_endpoint: auth
 
 # Media settings
 media_folder: "site/assets/images/uploads"
