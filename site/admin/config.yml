@@ -2,9 +2,9 @@ backend:
   name: github
   repo: Don-Helios/donhelios-web
   branch: main
-  # Add these for better security context handling
   auth_scope: repo
-  base_url: https://api.github.com
+  # Add your OAuth app client ID here
+  client_id: ${{secrets.YOUR_GITHUB_OAUTH_CLIENT_ID}}
 
 # Media settings
 media_folder: "site/assets/images/uploads"
