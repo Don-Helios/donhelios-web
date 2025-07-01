@@ -47,6 +47,23 @@
     const storageOK = testStorage();
     const httpsOK = testHTTPS();
     
+    // Manual fix function for when CMS doesn't store token
+    window.manualFix = function() {
+      // Get the last received token from console logs
+      const lastToken = window.lastAuthToken;
+      if (lastToken) {
+        const userData = {
+          token: lastToken,
+          provider: 'github'
+        };
+        localStorage.setItem('decap-cms.user', JSON.stringify(userData));
+        console.log('Stored token manually:', userData);
+        window.location.reload();
+      } else {
+        alert('No token found. Try OAuth flow again.');
+      }
+    };
+    
     if (!httpsOK) {
       document.body.innerHTML = '<div style="padding: 20px; background: #ffebee; border: 1px solid #f44336; margin: 20px;"><h2>HTTPS Required</h2><p>Decap CMS requires HTTPS to function properly. Please access this page via <strong>https://</strong> instead of http://</p><p>Try: <a href="https://donhelios.com/admin/">https://donhelios.com/admin/</a></p></div>';
     } else if (!storageOK) {
@@ -66,59 +83,44 @@
           console.log('GitHub auth success message detected!');
           debugEl.innerHTML += '<div style="color: orange;">🔥 Auth success detected!</div>';
           
-          // Extract and manually store the token
+          // Extract and log the token, but don't auto-reload
           try {
             const tokenMatch = event.data.match(/authorization:github:success:(.+)/);
             if (tokenMatch) {
               const authData = JSON.parse(tokenMatch[1]);
               console.log('Parsed auth data:', authData);
+              debugEl.innerHTML += '<div style="color: blue;">Token: ' + authData.token.substring(0, 10) + '...</div>';
               
-              // Wait longer for CMS to process the message naturally
-              debugEl.innerHTML += '<div style="color: yellow;">⏳ Waiting for CMS to process...</div>';
+              // Store token globally for manual fix
+              window.lastAuthToken = authData.token;
               
-              // Check multiple localStorage formats that CMS might use
-              setTimeout(() => {
-                console.log('=== CHECKING ALL POSSIBLE CMS KEYS ===');
+              // Just wait and see what CMS does naturally
+              debugEl.innerHTML += '<div style="color: yellow;">⏳ Waiting for CMS...</div>';
+              
+              // Check storage every 2 seconds for 10 seconds
+              let checks = 0;
+              const checkInterval = setInterval(() => {
+                checks++;
+                console.log(`Check ${checks}: localStorage keys:`, Object.keys(localStorage));
+                
+                // Look for any new keys
+                let foundAuthKey = false;
                 Object.keys(localStorage).forEach(key => {
-                  console.log(`${key}:`, localStorage.getItem(key));
-                });
-                
-                // Try different key formats if nothing is stored
-                const possibleKeys = [
-                  'decap-cms.user',
-                  'netlify-cms.user', 
-                  'decap-cms.auth',
-                  'netlify-cms.auth',
-                  'decap-cms-user',
-                  'cms-user'
-                ];
-                
-                let tokenStored = false;
-                possibleKeys.forEach(key => {
-                  if (localStorage.getItem(key)) {
-                    tokenStored = true;
+                  if (key.toLowerCase().includes('user') || key.toLowerCase().includes('auth') || key.toLowerCase().includes('token')) {
+                    console.log(`${key}:`, localStorage.getItem(key));
+                    foundAuthKey = true;
                   }
                 });
                 
-                if (!tokenStored) {
-                  console.log('No token found, trying manual storage...');
-                  // Try the most likely format
-                  const userData = {
-                    token: authData.token,
-                    provider: 'github',
-                    backendName: 'github'
-                  };
-                  localStorage.setItem('decap-cms.user', JSON.stringify(userData));
-                  debugEl.innerHTML += '<div style="color: green;">✓ Token manually stored</div>';
-                  
-                  setTimeout(() => {
-                    debugEl.innerHTML += '<div style="color: blue;">🔄 Reloading...</div>';
-                    window.location.reload();
-                  }, 1000);
-                } else {
-                  debugEl.innerHTML += '<div style="color: green;">✓ Token found in storage!</div>';
+                if (foundAuthKey) {
+                  debugEl.innerHTML += '<div style="color: green;">✓ Found auth data!</div>';
+                  clearInterval(checkInterval);
+                } else if (checks >= 5) {
+                  debugEl.innerHTML += '<div style="color: red;">✗ No auth data stored</div>';
+                  debugEl.innerHTML += '<div style="color: orange;">Click to manually fix: <button onclick="manualFix()">Fix Auth</button></div>';
+                  clearInterval(checkInterval);
                 }
-              }, 3000);
+              }, 2000);
             }
           } catch (e) {
             console.error('Failed to parse auth data:', e);
