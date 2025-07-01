@@ -13,6 +13,7 @@
     <div id="storage-test"></div>
     <div id="https-test"></div>
     <div id="cms-status"></div>
+    <div id="message-debug" style="margin-top: 10px; font-family: monospace; font-size: 10px;"></div>
   </div>
 
   <script>
@@ -51,19 +52,47 @@
     } else if (!storageOK) {
       document.body.innerHTML = '<div style="padding: 20px; background: #fff3e0; border: 1px solid #ff9800; margin: 20px;"><h2>Browser Storage Blocked</h2><p>Your browser is blocking localStorage access. This can happen in:</p><ul><li>Private/Incognito mode</li><li>Some browser security settings</li><li>Certain extensions</li></ul><p>Please try:</p><ul><li>Regular browser window (not incognito)</li><li>Different browser</li><li>Check browser privacy settings</li></ul></div>';
     } else {
+      // Add message debugging BEFORE loading CMS
+      window.addEventListener('message', function(event) {
+        const debugEl = document.getElementById('message-debug');
+        console.log('Raw postMessage received:', event);
+        console.log('Event origin:', event.origin);
+        console.log('Event data:', event.data);
+        
+        debugEl.innerHTML += `<div style="color: blue;">Message from: ${event.origin}</div>`;
+        debugEl.innerHTML += `<div style="color: blue;">Data: ${JSON.stringify(event.data)}</div>`;
+        
+        if (event.data && typeof event.data === 'string' && event.data.includes('authorization:github:success')) {
+          console.log('GitHub auth success message detected!');
+          debugEl.innerHTML += '<div style="color: orange;">🔥 Auth success detected!</div>';
+          
+          // Check localStorage after the message
+          setTimeout(() => {
+            console.log('localStorage after auth message:', Object.keys(localStorage));
+            Object.keys(localStorage).forEach(key => {
+              if (key.toLowerCase().includes('cms') || key.toLowerCase().includes('auth') || key.toLowerCase().includes('token')) {
+                console.log(`${key}:`, localStorage.getItem(key));
+              }
+            });
+            
+            debugEl.innerHTML += '<div style="color: purple;">Checked localStorage (see console)</div>';
+          }, 1000);
+        }
+      });
+
       // Storage works, load CMS
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/decap-cms@^3.7.1/dist/decap-cms.js';
       script.onload = function() {
         document.getElementById('cms-status').innerHTML = '<div style="color: green;">✓ Decap CMS loaded</div>';
         
-        // Hide debug panel after 5 seconds if CMS loads successfully
+        // Hide debug panel after 10 seconds (extended for debugging)
         setTimeout(() => {
           const debugPanel = document.getElementById('debug-info');
           if (debugPanel) {
-            debugPanel.style.display = 'none';
+            debugPanel.style.opacity = '0.3';
           }
-        }, 5000);
+        }, 10000);
       };
       script.onerror = function() {
         document.getElementById('cms-status').innerHTML = '<div style="color: red;">✗ Failed to load Decap CMS</div>';
