@@ -29,6 +29,11 @@ jobs:
         bundler-cache: true
         working-directory: site
         
+    - name: Add Linux platform to Gemfile.lock
+      run: |
+        cd site
+        bundle lock --add-platform x86_64-linux
+        
     - name: Build Jekyll site
       run: |
         cd site
