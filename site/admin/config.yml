@@ -2,11 +2,14 @@ backend:
   name: github
   repo: Don-Helios/donhelios-web
   branch: main
-  base_url: https://api.netlify.com
+  base_url: https://auth.donhelios.com
   auth_endpoint: auth
+  site_domain: donhelios.com
 
 media_folder: "site/assets/images"
 public_folder: "/assets/images"
+
+site_url: https://donhelios.com
 
 collections:
   - name: "posts"
