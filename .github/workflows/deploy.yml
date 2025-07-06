@@ -1,19 +1,15 @@
 name: Deploy Jekyll Site to S3
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
-
 permissions:
   id-token: write   # Required for OIDC
   contents: read    # Required to checkout code
-
 env:
   AWS_REGION: us-east-2
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -25,7 +21,7 @@ jobs:
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.1'
+        ruby-version: '3.3'
         bundler-cache: true
         working-directory: site
         
@@ -39,6 +35,14 @@ jobs:
         cd site
         bundle exec jekyll build --destination ../_site
         
+    - name: Check site build results
+      run: |
+        echo "=== Site Build Analysis ==="
+        echo "Total files generated: $(find _site/ -type f | wc -l)"
+        echo "Total size: $(du -sh _site/)"
+        echo "File breakdown:"
+        find _site/ -type f | sed 's/.*\.//' | sort | uniq -c | sort -nr | head -10
+        
     - name: Configure AWS credentials using OIDC
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -46,13 +50,55 @@ jobs:
         role-session-name: GitHubActions-Jekyll-Deploy
         aws-region: ${{ env.AWS_REGION }}
         
+    - name: Preview S3 sync operations
+      run: |
+        echo "=== S3 Sync Preview ==="
+        echo "Operations that will be performed:"
+        aws s3 sync _site/ s3://${{ secrets.S3_BUCKET_NAME }} \
+          --delete \
+          --exclude "${{ secrets.EXCLUDE_FOLDER }}/*" \
+          --cache-control "public, max-age=86400" \
+          --dryrun > sync_preview.txt
+        
+        echo "Total operations: $(wc -l < sync_preview.txt)"
+        echo "Upload operations: $(grep -c "upload:" sync_preview.txt || echo 0)"
+        echo "Delete operations: $(grep -c "delete:" sync_preview.txt || echo 0)"
+        echo "First 15 operations:"
+        head -15 sync_preview.txt
+        
+        # Show file size distribution for uploads
+        echo "=== Files being uploaded ==="
+        grep "upload:" sync_preview.txt | head -10 || echo "No uploads found"
+        
     - name: Deploy to S3
       run: |
+        echo "=== Starting S3 Deployment ==="
         aws s3 sync _site/ s3://${{ secrets.S3_BUCKET_NAME }} \
           --delete \
           --exclude "${{ secrets.EXCLUDE_FOLDER }}/*" \
           --cache-control "public, max-age=86400"
-          
+        echo "=== S3 Deployment Complete ==="
+        
+    - name: Estimate S3 request usage
+      run: |
+        echo "=== Request Usage Estimation ==="
+        # Count actual operations from the sync preview
+        UPLOAD_COUNT=$(grep -c "upload:" sync_preview.txt || echo 0)
+        DELETE_COUNT=$(grep -c "delete:" sync_preview.txt || echo 0)
+        TOTAL_REQUESTS=$((UPLOAD_COUNT + DELETE_COUNT))
+        
+        echo "Estimated S3 requests used in this deployment:"
+        echo "- Upload requests: $UPLOAD_COUNT"
+        echo "- Delete requests: $DELETE_COUNT"
+        echo "- Total requests: $TOTAL_REQUESTS"
+        echo "- Free tier remaining (approx): $((2000 - TOTAL_REQUESTS)) requests"
+        
+        # Warning if high usage
+        if [ $TOTAL_REQUESTS -gt 200 ]; then
+          echo "⚠️  WARNING: High request usage detected!"
+          echo "Consider optimizing your Jekyll build or deployment process"
+        fi
+        
     - name: Invalidate CloudFront
       run: |
         # Use the distribution ID from secrets
