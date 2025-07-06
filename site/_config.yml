@@ -1,57 +1,62 @@
-title: Vonge
+title: Solarium
+logo: /assets/images/logo.avif
+baseurl: ""
+url: "https://donhelios.com"
+description: "Personal website and blog"
 
-plugins:
-  - jekyll-bookshop
-  - jekyll-sitemap
-  - jekyll/tagging
+##
+# Typewritter configuration.
+# Feel free to disable if you don't like it.
+##
+typewriter_effect: true
 
-# Multiple bookshops can be used on one website,
-# or different production / staging locations.
-bookshop_locations:
-  - ../component-library
-
-exclude:
-  - postcss.config.js
-  - node_modules
-
-include:
-  - _cloudcannon
-
-collections_dir: 'collections'
-
+##
+# Collections configuration
+##
 collections:
-  pages:
-    output: true
-    permalink: /:title/
   projects:
     output: true
-    permalink: /projects/:slug/
-  testimonials:
-    output: false
-  posts:
-    output: true
-    permalink: /blog/:slug/
 
-defaults:
-  - scope:
-      path: ""
-    values:
-      layout: default
-  - scope:
-      type: pages
-      path: _pages/index.html
-    values:
-      permalink: /
-  - scope:
-      type: projects
-    values:
-      layout: project
-  - scope:
-      type: posts
-    values:
-      layout: post
+##
+# Contact Channels configuration
+# Uncomment for enable. Available contact channels are email, github, telegram, stackoverflow, discord, mastodon.
+# Please fell free to send a PR if you need a new one.
+# DISABLE GITHUB setting it as an empty string: ""
+# if false, then no contact channels will be display.
+##
+contact_channels_section: true
+contact_channels:
+  email: "donhelios@outlook.com"
+  github: "https://github.com/Don-Helios"
+  # telegram: "https://t.me/"
+  # stackoverflow: "https://stackoverflow.com"
+  # discord: "https://discord.com/"
+  # mastodon: "https://lile.cl/"
+  # threads: "https://www.threads.net/@example"
+  # linkedin: "https://www.linkedin.com/in/example/"
 
-# Tags
-tag_page_dir: tag
-tag_page_layout: tag_page
-tag_permalink_style: /:title
+##
+# Plugins configuration
+##
+plugins:
+  - jekyll-archives
+  - jekyll-seo-tag
+  - jekyll-polyglot
+
+##
+# Polyglot configuration
+##
+languages: ["en"]
+default_lang: "en"
+exclude_from_localization: ["javascript", "images", "css", "public"]
+parallel_localization: true
+
+##
+# Archives configuration
+##
+jekyll-archives:
+  enabled:
+    - categories
+  layout: blog
+  permalinks:
+    category: "/category/:name/"

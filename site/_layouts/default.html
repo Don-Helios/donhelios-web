@@ -1,29 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="{{site.active_lang}}">
 
-{% include head.html %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="{{ '/assets/css/dist-style.css' | relative_url }}" rel="stylesheet" />
+  <link href="{{ '/assets/css/fonts.css' | relative_url }}" rel="stylesheet" />
+  {% if site.typewriter_effect %}
+  <script src="https://unpkg.com/typeit@8.8.4/dist/index.umd.js"></script>
+  {% endif %} {% seo %} {% include custom_head.html %}
+</head>
 
-<body>
+<body class="bg-white text-gray-900 dark:bg-gray-700 dark:text-slate-100">
+  {% if site.typewriter_effect %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      new TypeIt("h1", {}).go();
+    });
+  </script>
+  {% endif %} {% include navbar.html %} {{ content }} {% include footer.html
+  %}
+  <script>
+    document.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default link action temporarily
+        link.classList.add("gentle-clicked");
 
-    {% if site.data.general_settings.google-analytics %}
-        {% include google-analytics.html %}
-    {% endif %}
-
-    {% include header.html %}
-
-    {{ content }}
-
-    <!--
-        Bookshop components are accessed using the bookshop tag,
-        using the same syntax as the standard Jekyll include tag.
-    -->
-    {% bookshop_include page content_blocks=page.content_blocks page_theme=page.page_theme %}
-
-    <div class="top" title="Top"><i class="ion ion-ios-arrow-up"></i></div>
-
-    {% include footer.html %}
-
-    <script src="/js/scripts.js"></script>
-    <script src="/js/common.js"></script>
+        setTimeout(function () {
+          link.classList.remove("gentle-clicked");
+          window.location.href = link.href; // Navigate to the link after the animation
+        }, 300); // Duration of the gentle bounce animation
+      });
+    });
+  </script>
 </body>
+
 </html>

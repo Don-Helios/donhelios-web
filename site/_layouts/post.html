@@ -2,82 +2,58 @@
 layout: default
 ---
 
-<div class="post-top">
-  <div class="container">
-    <div class="row">
+<link rel="stylesheet" href="{{ '/assets/css/monokai.css' | relative_url }}">
+<div class="container mx-auto">
+  <div id="post" class="prose max-w-[75ch] prose-neutral mx-auto pb-10 pt-20 lg:pt-[90px] lg:pb-20">
+    <div class="pb-4">
+      <a href="{{site.url}}/category/{{page.categories[0] | replace: ' ', '-' | downcase}}"
+        class="no-underline font-mulish text-sm hover:text-sky-400 text-gray-500">
+        {{ page.categories[0] | upcase }}
+      </a>
+    </div>
 
-      {%if page.image %}
-      <div class="col col-6 col-d-12">
-        <div class="post-image">
-          <img loading="lazy" src="{{site.baseurl}}{{page.image}}" alt="{{page.title}}">
-        </div>
+    <h1 class="text-left text-2xl font-bold md:text-5xl text-black">{{page.title}}</h1>
+
+    <div class="flex flex-col md:flex-row text-sm font-mulish justify-between items-center">
+      <div class="flex">
+        <p>{{ page.author }}</p>
+        <p class="px-2">•</p>
+        <p>{{ page.date | date: "%-d %B %Y" }}</p>
+        <p class="px-2">•</p>
+        <p>
+          {% assign words = content | number_of_words %}
+          {% if words < 360 %} 1 min {% else %} {{ words | divided_by: 180 }} mins {% endif %} </p>
       </div>
-      {%endif %}
-
-      <div class="col col-6 col-d-12">
-        <div class="post__info">
-
-          {% if page.tags.size >= 1 %}
-          <div class="post-tags">
-            {% for tag in page.tags %}
-              <a href="{{ site.baseurl }}/tag/{{ tag | downcase }}" class="post-tags__tag">{{ tag }}</a>
-            {% endfor %}
-          </div>
-          {% endif %}
-
-
-          <h1 class="post__title">{{ page.title | escape }}</h1>
-
-          <div class="post__meta">
-            <div class="post__author-image">
-              <img loading="lazy" src="{{ site.data.author.author_image }}" alt="{{ site.data.author.author_name }}">
-            </div>
-
-            <div class="post__meta-bottom">
-              <div class="post__author">{{ site.data.author.author_name }}</div>
-              <time class="post__date" datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date_to_string
-                }}</time>
-            </div>
-          </div>
-
-        </div>
+      <div>
+        {% include sharing.html %}
       </div>
     </div>
-  </div>
-</div>
 
-<!-- begin post -->
-<div class="container animate">
+    {% if page.image %}
+    <img class="w-full" src="{{page.image | relative_url}}" alt="{{page.title}}">
+    {% endif %}
 
-  <article class="post">
-
-    <div class="post__content">
-      {{ content }}
+    <div class="my-6">
+      {{content}}
     </div>
 
-    {% include share.html %}
-
-  </article>
-</div>
-<!-- end post -->
-
-<div class="container">
-  <div class="row">
-    <div class="col col-10 col-d-12 push-d-0 push-1">
-      {% include post-navigation.html %}
+    <div class="mx-auto py-8">
+      <p class="text-center font-extrabold italic">
+        {{ site.data[site.active_lang].strings.post.share | default:
+        site.data['en'].strings.post.share}}
+      </p>
+      {% include sharing.html %}
     </div>
+
+    <div class="font-mulish flex justify-center mb-10">
+      {% if page.previous.url %}
+      <a class="pr-2" href="{{page.previous.url | relative_url}}">&laquo; {{ page.previous.title }}</a>
+      {% endif %}
+      {% if page.next.url %}
+      <a class="pl-2" href="{{page.next.url | relative_url}}">{{ page.next.title }} &raquo;</a>
+      {% endif %}
+    </div>
+
+    {% include comment_system.html %}
   </div>
 </div>
-
-{% include related-posts.html %}
-
-{% if site.data.general_settings.disqus-identifier %}
-  {% include disqus-comments.html %}
-{% endif %}
-
-{% bookshop
-  newsletter newsletter_title=site.data.newsletter.newsletter_title
-  newsletter_description=site.data.newsletter.newsletter_description
-  newsletter_identifier=site.data.newsletter.newsletter_identifier
-  newsletter_button=site.data.newsletter.newsletter_button
-%}
