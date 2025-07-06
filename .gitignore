@@ -8,3 +8,9 @@ bookshop-live.js
 .DS_Store
 site/.bundle
 .bundle
+
+# Additional useful ignores
+*.log
+.env
+.env.local
+Thumbs.db
