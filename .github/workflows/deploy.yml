@@ -1,4 +1,5 @@
 name: Deploy Jekyll Site to S3
+
 on:
   push:
     branches: [ main ]
@@ -16,52 +17,37 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Setup Node.js (for Bookshop)
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-
+      
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.1'
-        # Don't use bundler-cache since Gemfile is in subdirectory
-        bundler-cache: false
+        bundler-cache: true
         working-directory: site
-
-    - name: Install Node dependencies
-      run: npm install
-
-    - name: Install Jekyll dependencies
-      run: |
-        cd site
-        bundle install
-
+        
     - name: Build Jekyll site
       run: |
         cd site
         bundle exec jekyll build --destination ../_site
-
+        
     - name: Configure AWS credentials using OIDC
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: GitHubActions-Jekyll-Deploy
         aws-region: ${{ env.AWS_REGION }}
-
+        
     - name: Deploy to S3
       run: |
         aws s3 sync _site/ s3://${{ secrets.S3_BUCKET_NAME }} \
           --delete \
           --exclude "${{ secrets.EXCLUDE_FOLDER }}/*" \
           --cache-control "public, max-age=86400"
-
+          
     - name: Invalidate CloudFront
       run: |
         # Use the distribution ID from secrets
