@@ -6,7 +6,7 @@ backend:
   auth_endpoint: auth
   site_domain: donhelios.com
 
-media_folder: "site/assets/images"
+media_folder: "assets/images"
 public_folder: "/assets/images"
 
 site_url: https://donhelios.com
@@ -14,7 +14,7 @@ site_url: https://donhelios.com
 collections:
   - name: "posts"
     label: "Blog Posts"
-    folder: "site/_posts"
+    folder: "_posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
@@ -28,7 +28,7 @@ collections:
 
   - name: "projects"
     label: "Projects"
-    folder: "site/_projects"
+    folder: "_projects"
     create: true
     slug: "{{slug}}"
     fields:
@@ -42,21 +42,21 @@ collections:
   - name: "pages"
     label: "Pages"
     files:
-      - file: "site/index.md"
+      - file: "index.md"
         label: "Home Page"
         name: "home"
         fields:
           - {label: "Layout", name: "layout", widget: "hidden", default: "default"}
           - {label: "Title", name: "title", widget: "string"}
           - {label: "Body", name: "body", widget: "markdown"}
-      - file: "site/blog.md"
+      - file: "blog.md"
         label: "Blog Page"
         name: "blog"
         fields:
           - {label: "Layout", name: "layout", widget: "hidden", default: "blog"}
           - {label: "Title", name: "title", widget: "string"}
           - {label: "Body", name: "body", widget: "markdown"}
-      - file: "site/projects.md"
+      - file: "projects.md"
         label: "Projects Page"
         name: "projects"
         fields:
