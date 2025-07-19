@@ -6,6 +6,7 @@ home:
   contact_me: " "  # ← Add this line
 footer:
   title: "Contact Me"
+  description: " "
   pages: Pages
 blog:
   read_more: "Read More ->"
