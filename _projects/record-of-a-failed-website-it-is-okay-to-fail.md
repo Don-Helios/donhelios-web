@@ -4,7 +4,7 @@ title: Record of a failed website [IT IS OKAY TO FAIL]
 image: /assets/images/screenshot-2025-07-19-021656.png
 ---
 And Failing we are
---- 
+
 ## Current Situation
 
 * **Status**: Broken/Frankenstein setup - theme improperly installed over previous setup
