@@ -1,6 +1,7 @@
 ---
 layout: project
 title: Record of a failed website [IT IS OKAY TO FAIL]
+image: /assets/images/screenshot-2025-07-19-021656.png
 ---
 ## Current Situation
 
