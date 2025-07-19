@@ -7,7 +7,7 @@ title: Home
 description: A Don Helios' portfolio site
 image: /assets/images/Sun-Profile.png
 main_content: >
-  ##Welcome to my Solarium.
+  # Welcome to my Solarium.
 
   **I am, as a matter of fact, Don Helios.** I put this space together not by miracle
   but with an unexpectedly incredible effort. May it become a humble display of work well done.
