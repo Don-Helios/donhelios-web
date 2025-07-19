@@ -14,6 +14,8 @@ image: /assets/images/screenshot-2025-07-19-021656.png
 
 **Current Status**: The infrastructure and deployment pipeline are actually solid. The main issue is the improper theme installation method, which is why the site appears broken.
 
+--- 
+
 ## Infrastructure Components
 
 ### Infrastructure Stack
