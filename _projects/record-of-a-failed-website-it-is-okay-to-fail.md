@@ -3,6 +3,8 @@ layout: project
 title: Record of a failed website [IT IS OKAY TO FAIL]
 image: /assets/images/screenshot-2025-07-19-021656.png
 ---
+And Failing we are
+--- 
 ## Current Situation
 
 * **Status**: Broken/Frankenstein setup - theme improperly installed over previous setup
@@ -13,8 +15,6 @@ image: /assets/images/screenshot-2025-07-19-021656.png
 * **Main Problem**: Theme not properly installed via Gemfile - was cloned instead
 
 **Current Status**: The infrastructure and deployment pipeline are actually solid. The main issue is the improper theme installation method, which is why the site appears broken.
-
---- 
 
 ## Infrastructure Components
 
