@@ -3,6 +3,7 @@ home:
   see_more_posts: "See More Posts ->"
   projects_title: "Last Projects"
   see_more_projects: "See More Projects ->"
+  contact_me: " "  # ← Add this line
 footer:
   title: "Let's keep in touch!"
   description: " Find me on any of these platforms. "
