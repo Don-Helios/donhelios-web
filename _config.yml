@@ -43,7 +43,7 @@ contact_channels:
 #Collections
 collections:
   projects:
-    output:true
+    output: true
     permalink: /projects/:name/
 
 # Exclude from processing.
