@@ -32,6 +32,15 @@ theme: awesome-jekyll-theme
 plugins:
   - jekyll-feed
 
+#Contact Channels
+contact_channels:
+  email: "donhelios@outlook.com"
+  #github: "https://github.com/Don-Helios"
+  #telegram: "https://t.me/"
+  #stackoverflow: "https://stackoverflow.com/"
+  #discord: "https://discord.com/"
+  #mastodon: "https://lile.cl/"
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
