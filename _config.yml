@@ -35,7 +35,7 @@ plugins:
 #Contact Channels
 contact_channels:
   email: "donhelios@outlook.com"
-  #github: "https://github.com/Don-Helios"
+  github: " "
   #telegram: "https://t.me/"
   #stackoverflow: "https://stackoverflow.com/"
   #discord: "https://discord.com/"
