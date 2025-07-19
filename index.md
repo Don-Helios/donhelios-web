@@ -4,8 +4,17 @@
 
 layout: home
 title: Home
-nav: false
+description: A Don Helios' portfolio site
+image: /assets/images/Sun-Profile.png
+main_content: >
+  #Welcome to my Solarium.
+
+  **I am, as a matter of fact, Don Helios** I put this space together not by miracle
+  but with an unexpectedly incredible effort. May it become a humble display of work well done.
+footer: true
+permalink: /
+
 ---
 
-# Welcome to my Solarium
-This is my Solarium, rebuilt with a clean Jekyll setup.
+# Oh yeah, I pride myself in owning DonHelios.com
+But if you're willing to pay a lot of money for it, feel free to reach out. I most likey won't sell it, anyway.
