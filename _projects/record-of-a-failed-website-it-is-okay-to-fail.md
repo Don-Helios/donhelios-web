@@ -5,7 +5,7 @@ image: /assets/images/screenshot-2025-07-19-021656.png
 ---
 And Failing we are
 
-## Current Situation
+ Current Situation
 
 * **Status**: Broken/Frankenstein setup - theme improperly installed over previous setup
 * **Domain**: donhelios.com
@@ -16,9 +16,9 @@ And Failing we are
 
 **Current Status**: The infrastructure and deployment pipeline are actually solid. The main issue is the improper theme installation method, which is why the site appears broken.
 
-## Infrastructure Components
+ Infrastructure Components
 
-### Infrastructure Stack
+Infrastructure Stack
 
 * **AWS S3 Bucket**: Static site hosting
 * **AWS CloudFront Distribution**: CDN with custom SSL certificate
@@ -31,15 +31,15 @@ And Failing we are
 * **GitHub Actions**: For static site (with Jekyll) deployment
 * **GitHub OAuth app**: Enables Decap CMS authentication via GitHub OAuth
 
-### Additional Components
+ Additional Components
 
 * **LigthSail**: WordPress instance for subdomain
 
-## Documentation Index
+ Documentation Index
 
 * A bunch of links that actually show the only important stuff on this entry, but this is just a placeholder
 
-## Key Insights
+ Key Insights
 
 1. **✅ Deployment Structure is CORRECT**: The GitHub Actions workflow properly handles the `site/` subfolder by building to `_site/` at the repository root, then syncing to S3 root. This matches your AWS configuration.
 2. **✅ Professional Workflow**: Your GitHub Actions workflow is sophisticated with:
