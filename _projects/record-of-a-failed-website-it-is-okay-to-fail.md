@@ -5,7 +5,7 @@ image: /assets/images/screenshot-2025-07-19-021656.png
 ---
 And Failing we are
 
- Current Situation
+Current Situation
 
 * **Status**: Broken/Frankenstein setup - theme improperly installed over previous setup
 * **Domain**: donhelios.com
