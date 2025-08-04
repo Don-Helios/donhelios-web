@@ -1,4 +1,4 @@
-name: Deploy Jekyll Site to S3
+name: "[LEGACY | DECOMM] Deploy Jekyll Site to S3"
 on:
   push:
     branches: [ main ]
