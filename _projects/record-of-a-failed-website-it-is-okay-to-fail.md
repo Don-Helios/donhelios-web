@@ -1,7 +1,7 @@
 ---
 layout: project
 title: Record of a failed website [IT IS OKAY TO FAIL]
-image: /assets/images/screenshot-2025-07-19-021656.png
+image: /assets/images/danist-soh-8gg2ne_utcm-unsplash.jpg
 ---
 # Initial Assessment and Path Forward
 
